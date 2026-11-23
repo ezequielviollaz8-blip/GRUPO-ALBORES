@@ -1,6 +1,6 @@
 // Guarda la app en el aparato para que abra sin internet.
 // Al publicar cambios, subir el número de versión para que los aparatos los reciban.
-const CACHE = 'albores-v7';
+const CACHE = 'albores-v8';
 const FILES = [
   './',
   './index.html',
