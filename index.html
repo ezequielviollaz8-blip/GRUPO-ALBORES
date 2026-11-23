@@ -108,6 +108,10 @@ pre.rh{white-space:pre;line-height:1.45}
 .foot button{flex:1}
 .notes{margin:18px 16px;max-width:720px}
 .notes textarea{min-height:120px}
+.recs .item audio{width:100%;height:40px;margin-top:6px}
+.recdot{width:14px;height:14px;border-radius:50%;background:#ff3b30;display:inline-block;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+.rectime{font-size:44px;font-weight:700;text-align:center;margin:10px 0;font-variant-numeric:tabular-nums}
 /* hojas y menús */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;display:flex;align-items:flex-end;justify-content:center}
 .sheet{background:#111114;border:1px solid var(--bd);width:100%;max-width:640px;max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
@@ -154,7 +158,7 @@ const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(
 const byTitle=(a,b)=>a.title.localeCompare(b.title,'es',{sensitivity:'base'});
 
 /* ---------- íconos ---------- */
-const P={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',music:'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',cal:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4',list:'M5 3h14v18H5zM9 8l1.5 1.5L13 7M9 14l1.5 1.5L13 13M15 8h2M15 14h2',users:'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6',gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-5-5',filter:'M3 4h18l-7 8v7l-4 2v-9z',star:'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z',more:'M12 5h.01M12 12h.01M12 19h.01',plus:'M12 5v14M5 12h14',pin:'M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2',calplus:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4M12 13v6M9 16h6',bell:'M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0',menu:'M4 6h16M4 12h16M4 18h16',back:'M15 18l-6-6 6-6',chev:'M9 18l6-6-6-6',share:'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',wa:'M3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 8 19.3zM9 8.5c0 3.5 3 6.5 6.5 6.5l1.2-1.5-2-1-1 .8a5 5 0 0 1-2.5-2.5l.8-1-1-2z',phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z',edit:'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',trash:'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6',hl:'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4',eraser:'M7 21h13M5.5 17.5l-2-2a2 2 0 0 1 0-2.8L13 3.2a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L10 20H7zM9 9l6 6',undo:'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11',play:'M7 4l13 8-13 8z',pause:'M7 4h3v16H7zM14 4h3v16h-3z',full:'M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3',hand:'M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15',copy:'M9 9h11v11H9zM5 15H4V4h11v1',dl:'M12 3v12M7 10l5 5 5-5M5 21h14',up:'M18 15l-6-6-6 6',down:'M6 9l6 6 6-6',x:'M18 6L6 18M6 6l12 12',check:'M20 6L9 17l-5-5',note:'M4 4h16v11l-5 5H4zM15 20v-5h5',alignL:'M3 6h18M3 12h11M3 18h15',alignC:'M3 6h18M6.5 12h11M4.5 18h15',dup:'M8 8h12v12H8zM4 16V4h12'};
+const P={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',music:'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',cal:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4',list:'M5 3h14v18H5zM9 8l1.5 1.5L13 7M9 14l1.5 1.5L13 13M15 8h2M15 14h2',users:'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6',gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-5-5',filter:'M3 4h18l-7 8v7l-4 2v-9z',star:'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z',more:'M12 5h.01M12 12h.01M12 19h.01',plus:'M12 5v14M5 12h14',pin:'M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2',calplus:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4M12 13v6M9 16h6',bell:'M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0',menu:'M4 6h16M4 12h16M4 18h16',back:'M15 18l-6-6 6-6',chev:'M9 18l6-6-6-6',share:'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',wa:'M3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 8 19.3zM9 8.5c0 3.5 3 6.5 6.5 6.5l1.2-1.5-2-1-1 .8a5 5 0 0 1-2.5-2.5l.8-1-1-2z',phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z',edit:'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',trash:'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6',hl:'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4',eraser:'M7 21h13M5.5 17.5l-2-2a2 2 0 0 1 0-2.8L13 3.2a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L10 20H7zM9 9l6 6',undo:'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11',play:'M7 4l13 8-13 8z',pause:'M7 4h3v16H7zM14 4h3v16h-3z',full:'M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3',hand:'M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15',copy:'M9 9h11v11H9zM5 15H4V4h11v1',dl:'M12 3v12M7 10l5 5 5-5M5 21h14',up:'M18 15l-6-6-6 6',down:'M6 9l6 6 6-6',x:'M18 6L6 18M6 6l12 12',check:'M20 6L9 17l-5-5',note:'M4 4h16v11l-5 5H4zM15 20v-5h5',alignL:'M3 6h18M3 12h11M3 18h15',alignC:'M3 6h18M6.5 12h11M4.5 18h15',dup:'M8 8h12v12H8zM4 16V4h12',mic:'M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3'};
 const ic=(n,cls,fill)=>'<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="'+(fill?'currentColor':'none')+'" stroke="currentColor" stroke-width="'+(n==='more'?3:2)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P[n]+'"/></svg>';
 
 /* ---------- datos ---------- */
@@ -168,10 +172,14 @@ function guessGenre(t){t=norm(t);
   for(const [r,g] of R)if(r.test(t))return g;return'';}
 
 /* guardado: solo en este aparato (IndexedDB) */
-const DBN='letras',STO='kv',KEY='state';
+const DBN='letras',STO='kv',KEY='state',AUD='aud';
 let dbh=null,store='loading',persisted=false,saveT=null,dirty=false;
-function idbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('sin IndexedDB'));const r=indexedDB.open(DBN,1);r.onupgradeneeded=()=>r.result.createObjectStore(STO);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function idbOpen(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('sin IndexedDB'));const r=indexedDB.open(DBN,2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STO))d.createObjectStore(STO);if(!d.objectStoreNames.contains(AUD))d.createObjectStore(AUD)};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 function idbGet(k){return new Promise((res,rej)=>{const q=dbh.transaction(STO).objectStore(STO).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+function audGet(k){return new Promise(res=>{if(!dbh)return res(audMem[k]||null);const q=dbh.transaction(AUD).objectStore(AUD).get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}
+function audPut(k,v){return new Promise((res,rej)=>{if(!dbh){audMem[k]=v;return res()}const tx=dbh.transaction(AUD,'readwrite');tx.objectStore(AUD).put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+function audDel(k){return new Promise(res=>{if(!dbh){delete audMem[k];return res()}const tx=dbh.transaction(AUD,'readwrite');tx.objectStore(AUD).delete(k);tx.oncomplete=tx.onerror=()=>res()})}
+const audMem={};
 function idbPut(k,v){return new Promise((res,rej)=>{const tx=dbh.transaction(STO,'readwrite');tx.objectStore(STO).put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)})}
 async function persistNow(){
   clearTimeout(saveT);saveT=null;if(!dirty)return;dirty=false;
@@ -185,9 +193,9 @@ function pend(col,id){const p=S.meta.pend;(p[col]=p[col]||{})[id]=1}
 function touch(){dirty=true;clearTimeout(saveT);saveT=setTimeout(persistNow,300);Cloud.kick()}
 function save(item){item.upd=Date.now();if(COL[item.type])pend(COL[item.type],item.id);touch()}
 function saveMine(s){s.mupd=Date.now();pend('mine',s.id);touch()}
-const emptyL=()=>({text:null,draw:[],notes:''});
-const hasL=l=>!!(l&&(l.draw.length||l.text!=null||l.notes));
-function fixL(l){l=l&&typeof l==='object'?l:emptyL();return{text:l.text==null?null:String(l.text),draw:Array.isArray(l.draw)?l.draw:[],notes:String(l.notes||'')}}
+const emptyL=()=>({text:null,draw:[],notes:'',rec:[]});
+const hasL=l=>!!(l&&(l.draw.length||l.text!=null||l.notes||l.rec.length));
+function fixL(l){l=l&&typeof l==='object'?l:emptyL();return{text:l.text==null?null:String(l.text),draw:Array.isArray(l.draw)?l.draw:[],notes:String(l.notes||''),rec:Array.isArray(l.rec)?l.rec.filter(r=>r&&r.id):[]}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persistNow()});
 window.addEventListener('pagehide',()=>{persistNow()});
 function migrate(){
@@ -204,7 +212,13 @@ async function boot(){
   }catch(e){dbh=null;store='ls';try{const r=localStorage.getItem(LS);if(r)S=JSON.parse(r)}catch(x){}}
   migrate();
   try{if(navigator.storage&&navigator.storage.persist){persisted=await navigator.storage.persisted();if(!persisted)persisted=await navigator.storage.persist()}}catch(e){}
-  render();Cloud.boot();
+  render();Cloud.boot();audGc();
+}
+async function audGc(){
+  if(!dbh)return;try{const used=new Set();Object.values(S.songs).forEach(s=>[s.reh,s.grp].forEach(l=>l.rec.forEach(r=>used.add(r.id))));
+    Object.keys(S.meta.pend.aud||{}).forEach(k=>used.add(k));
+    const keys=await new Promise(res=>{const q=dbh.transaction(AUD).objectStore(AUD).getAllKeys();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])});
+    for(const k of keys)if(!used.has(k))await audDel(k)}catch(e){}
 }
 function setMine(s,o){s.reh=fixL(o.reh);s.fav=!!o.fav;if(o.fs)s.fs=o.fs;s.mupd=o.mupd||0}
 function sharedOf(s){const o={};for(const k in s)if(!PERS.includes(k))o[k]=s[k];return o}
@@ -344,6 +358,7 @@ const Cloud={st:'off',user:null,err:'',fb:null,auth:null,db:null,subs:[],ready:{
   kick(ms){if(this.st!=='on')return;clearTimeout(this.kickT);this.kickT=setTimeout(()=>this.flush(),ms==null?1500:ms)},
   async flush(){
     if(this.busy||this.st!=='on'||!['songs','events','contacts','mine'].every(x=>this.ready[x]))return;
+    this.flushAudio();
     const f=this.fb,P=S.meta.pend,jobs=[];
     ['songs','events','contacts','mine'].forEach(k=>Object.keys(P[k]||{}).forEach(id=>{
       const it=k==='mine'?S.songs[id]:S[k][id];
@@ -365,6 +380,27 @@ const Cloud={st:'off',user:null,err:'',fb:null,auth:null,db:null,subs:[],ready:{
     this.busy=false;if(this.pending())this.kick();
     if(ui.view==='settings'&&!document.querySelector('.ov'))keep();
   },
+  apath(scope){return scope==='g'?['audio']:['users',this.user.uid,'audio']},
+  async flushAudio(){
+    if(this.audBusy||this.st!=='on')return;this.audBusy=true;const f=this.fb,P=S.meta.pend;
+    try{
+      for(const id of Object.keys(P.aud||{})){const scope=P.aud[id],blob=await audGet(id);
+        if(blob){const u8=new Uint8Array(await blob.arrayBuffer()),CH=700000,n=Math.max(1,Math.ceil(u8.length/CH));
+          for(let i=0;i<n;i++)await f.setDoc(f.doc(this.db,...this.apath(scope),id+'_'+i),{rec:id,i,n,type:blob.type||'',data:f.Bytes.fromUint8Array(u8.subarray(i*CH,(i+1)*CH)),ts:f.serverTimestamp()})}
+        delete P.aud[id];dirty=true;persistNow()}
+      for(const id of Object.keys(P.auddel||{})){const scope=P.auddel[id];
+        const q=await f.getDocs(f.query(f.collection(this.db,...this.apath(scope)),f.where('rec','==',id)));
+        for(const d of q.docs)await f.deleteDoc(d.ref||f.doc(this.db,...this.apath(scope),d.id));
+        delete P.auddel[id];dirty=true;persistNow()}
+    }catch(e){if(!this.audWarned){this.audWarned=true;toast('⚠️ No se pudo subir una grabación: '+this.why(e))}setTimeout(()=>this.kick(0),60000)}
+    this.audBusy=false;
+    if(ui.view==='settings'&&!document.querySelector('.ov'))keep();
+  },
+  async getAudio(id,scope,type){const f=this.fb;
+    const q=await f.getDocs(f.query(f.collection(this.db,...this.apath(scope)),f.where('rec','==',id)));
+    const parts=q.docs.map(d=>d.data()).sort((a,b)=>a.i-b.i);
+    if(!parts.length||parts.length!==parts[0].n)return null;
+    return new Blob(parts.map(p=>p.data.toUint8Array()),{type:parts[0].type||type||'audio/webm'})},
   async members(){const f=this.fb;const q=await f.getDocs(f.collection(this.db,'members'));return q.docs.map(d=>Object.assign({email:d.id},d.data()))},
   async addMember(email){const f=this.fb;await f.setDoc(f.doc(this.db,'members',email),{email,name:'',by:String(this.user.email||'').toLowerCase(),at:f.serverTimestamp()})},
   async delMember(email){const f=this.fb;await f.deleteDoc(f.doc(this.db,'members',email))}
@@ -650,11 +686,11 @@ function readerView(){
   const T=(t,i,l)=>'<button data-a="tool" data-v="'+t+'" class="'+(ui.tool===t?'on':'')+'">'+ic(i)+(l?'<span>'+l+'</span>':'')+'</button>';
   return '<div class="top"><button class="ghost sq" data-a="back" aria-label="Volver">'+ic('back')+'</button><h1>'+esc(s.title)+'</h1><button class="ghost sq star '+(s.fav?'fav':'')+'" data-a="fav" data-id="'+s.id+'">'+ic('star','',s.fav)+'</button><button class="sq" data-a="edit-song" aria-label="Editar">'+ic('edit')+'</button></div>'
   +'<div class="tools"><div class="seg" style="flex:1 1 100%"><button data-a="ver" data-v="clean" class="'+(!reh?'on':'')+'">Limpia</button><button data-a="ver" data-v="grp" class="'+(grp?'on':'')+'">Grupo'+(hasL(s.grp)?' ✏️':'')+'</button><button data-a="ver" data-v="mine" class="'+(ui.ver==='mine'?'on':'')+'">Mía'+(hasL(s.reh)?' ✏️':'')+'</button></div>'
-  +(reh?T('move','hand','Leer')+T('pen','edit')+T('hl','hl')+T('erase','eraser')+(ui.tool==='pen'||ui.tool==='hl'?colors.map(c=>'<button class="cdot '+(ui.color===c?'on':'')+'" style="background:'+c+'" data-a="color" data-v="'+c+'" aria-label="Color"></button>').join(''):'')+'<button data-a="undo" aria-label="Deshacer">'+ic('undo')+'</button><button data-a="clear" aria-label="Borrar dibujos">'+ic('trash')+'</button>':'')
+  +(reh?T('move','hand','Leer')+T('pen','edit')+T('hl','hl')+T('erase','eraser')+(ui.tool==='pen'||ui.tool==='hl'?colors.map(c=>'<button class="cdot '+(ui.color===c?'on':'')+'" style="background:'+c+'" data-a="color" data-v="'+c+'" aria-label="Color"></button>').join(''):'')+'<button data-a="undo" aria-label="Deshacer">'+ic('undo')+'</button><button data-a="clear" aria-label="Borrar dibujos">'+ic('trash')+'</button><button data-a="rec" aria-label="Grabar audio" title="Grabar audio">'+ic('mic')+'</button>'+(L.rec.length?'<button data-a="to-recs" title="Ver grabaciones">🎧 '+L.rec.length+'</button>':''):'')
   +'<button data-a="align" aria-label="Alineación" title="Centrar / alinear a la izquierda">'+ic(s.align==='center'?'alignC':'alignL')+'</button>'
   +'<button data-a="stage">'+ic('full')+'</button><button data-a="fs" data-v="-2">A−</button><button data-a="fs" data-v="2">A+</button><button data-a="auto" class="'+(ui.auto?'on':'')+'">'+ic(ui.auto?'pause':'play')+'</button>'+(ui.auto?'<button data-a="spd" data-v="-10">🐢</button><button data-a="spd" data-v="10">🐇</button>':'')+'</div>'
   +'<div id="wrap" class="'+(s.align==='center'?'ac':'')+'" style="font-size:'+(s.fs||24)+'px">'+textBlock(s,ui.ver)+'</div>'
-  +(reh?'<div class="notes"><p class="mu" style="margin:0 0 8px">'+(grp?'👥 <b>Ensayo del grupo</b>: lo que marques acá lo ven todos.':'🔒 <b>Mi ensayo</b>: solo lo ves vos.')+'</p><label class="f">'+(grp?'Notas del grupo':'Mis notas')+'</label><textarea id="r-notes" placeholder="Ej: entrar después del 2° bombo, bajar un tono…">'+esc(L.notes)+'</textarea><div class="row wrap" style="margin-top:10px"><button style="flex:1" data-a="edit-reh">'+ic('edit')+' Editar letra de ensayo</button><button style="flex:1" data-a="to-clean">'+ic('check')+' Pasar a limpio</button><button style="flex:1" data-a="reset-reh">'+ic('undo')+' Volver a copiar la limpia</button>'+(grp?'':'<button style="flex:1" data-a="to-grp">'+ic('users')+' Copiar al ensayo del grupo</button>')+'</div></div><div style="height:30vh"></div>':'')
+  +(reh?'<div class="notes"><p class="mu" style="margin:0 0 8px">'+(grp?'👥 <b>Ensayo del grupo</b>: lo que marques acá lo ven todos.':'🔒 <b>Mi ensayo</b>: solo lo ves vos.')+'</p>'+recList(s,ui.ver)+'<label class="f">'+(grp?'Notas del grupo':'Mis notas')+'</label><textarea id="r-notes" placeholder="Ej: entrar después del 2° bombo, bajar un tono…">'+esc(L.notes)+'</textarea><div class="row wrap" style="margin-top:10px"><button style="flex:1" data-a="edit-reh">'+ic('edit')+' Editar letra de ensayo</button><button style="flex:1" data-a="to-clean">'+ic('check')+' Pasar a limpio</button><button style="flex:1" data-a="reset-reh">'+ic('undo')+' Volver a copiar la limpia</button>'+(grp?'':'<button style="flex:1" data-a="to-grp">'+ic('users')+' Copiar al ensayo del grupo</button>')+'</div></div><div style="height:30vh"></div>':'')
   +(ev?'<div class="foot"><button data-a="goto" data-id="'+(prev||'')+'" '+(prev?'':'disabled')+'>'+ic('back')+' Anterior</button><button class="ghost" style="flex:.5" disabled>'+(idx+1)+' / '+ids.length+'</button><button class="pri" data-a="goto" data-id="'+(next||'')+'" '+(next?'':'disabled')+'>Siguiente '+ic('chev')+'</button></div>':'');
 }
 /* canciones por las que se pasa con un toque: el setlist del evento o la lista desde donde se abrió */
@@ -735,6 +771,67 @@ function erase(p){
   if(ch){saveLay(s,ui.ver);$('#wrap .dw svg g').innerHTML=svgPaths(l.draw)}
 }
 window.addEventListener('resize',()=>{if(ui.view==='reader')sizeSvgs();if(ui.view==='stage'&&ui.st&&ui.st.mode==='fit')setTimeout(doFit,200)});
+
+/* ---------- grabaciones de voz (en Grupo y en Mía) ----------
+   El audio se guarda en este aparato (IndexedDB, almacén 'aud') y se sube a la nube en partes.
+   En la letra queda solo la lista (nombre, duración); el audio se baja recién al tocar ▶️. */
+const REC_MAX=300;
+function fmtDur(s){s=Math.round(s||0);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function recList(s,ver){
+  const l=lay(s,ver),grp=ver==='grp';
+  return '<div class="recs"><label class="f">🎤 Grabaciones</label>'
+   +(l.rec.length?l.rec.map(r=>'<div class="item" style="flex-wrap:wrap" data-rid="'+esc(r.id)+'"><button class="sq" data-a="rec-play" data-id="'+esc(r.id)+'" aria-label="Escuchar">'+ic('play')+'</button><div class="t" data-a="rec-name" data-id="'+esc(r.id)+'"><b>'+esc(r.name)+'</b><small>'+fmtDur(r.dur)+' · '+esc(new Date(r.at).toLocaleDateString('es-AR',{day:'numeric',month:'short'}))+(grp&&r.by?' · '+esc(r.by):'')+' · tocá para cambiar el nombre</small></div><button class="ghost sq danger" data-a="rec-del" data-id="'+esc(r.id)+'" aria-label="Borrar grabación">'+ic('trash')+'</button></div>').join('')
+     :'<p class="mu" style="margin:4px 0">Todavía no hay grabaciones'+(grp?' del grupo':' tuyas')+' en esta canción.</p>')
+   +'<p><button style="width:100%" data-a="rec">'+ic('mic')+' Grabar '+(grp?'para el grupo':'para mí')+'</button></p></div>';
+}
+async function startRec(){
+  const s=S.songs[ui.songId],ver=ui.ver;if(!s||ver==='clean')return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Este aparato no permite grabar desde la app');return}
+  let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}})}
+  catch(e){toast(e&&e.name==='NotAllowedError'?'Hay que darle permiso al micrófono (en los ajustes del navegador)':'No se pudo usar el micrófono');return}
+  const mt=['audio/webm;codecs=opus','audio/mp4','audio/webm','audio/ogg;codecs=opus'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  let mr;try{mr=new MediaRecorder(stream,Object.assign({audioBitsPerSecond:32000},mt?{mimeType:mt}:{}))}catch(e){mr=new MediaRecorder(stream)}
+  const chunks=[];let t0=Date.now(),cancel=false,tm=null,done=false;
+  const stop=()=>{if(done)return;done=true;clearInterval(tm);window.removeEventListener('popstate',stop);try{if(mr.state!=='inactive')mr.stop()}catch(e){}stream.getTracks().forEach(t=>t.stop());keepAwakeOff()};
+  const m=modal('<h2 style="text-align:center;display:flex;gap:10px;align-items:center;justify-content:center"><span class="recdot"></span> Grabando</h2><p class="mu" style="text-align:center;margin:0">'+esc(s.title)+' · '+(ver==='grp'?'ensayo del grupo':'mi ensayo')+'</p><div class="rectime" id="rt">0:00</div><p class="mu" style="text-align:center;margin:0 0 12px">Máximo 5 minutos</p><div class="row"><button style="flex:1" id="rc">Descartar</button><button class="pri" style="flex:2" id="rs">⏹ Terminar y guardar</button></div>',()=>{cancel=true;stop()});
+  m.el.addEventListener('click',e=>{if(e.target===m.el)e.stopImmediatePropagation()},true); // un toque afuera no corta la grabación
+  mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  mr.onstop=async()=>{if(cancel){toast('Grabación descartada');return}
+    const dur=(Date.now()-t0)/1000;if(dur<1||!chunks.length){toast('La grabación quedó vacía');return}
+    await saveRec(s.id,ver,new Blob(chunks,{type:mr.mimeType||mt||'audio/webm'}),dur)};
+  tm=setInterval(()=>{const d=(Date.now()-t0)/1000,el=m.el.querySelector('#rt');if(el)el.textContent=fmtDur(d);if(d>=REC_MAX){m.el.remove();stop();toast('Se llegó a los 5 minutos: grabación guardada')}},250);
+  m.el.querySelector('#rc').onclick=()=>m.close();
+  m.el.querySelector('#rs').onclick=()=>{m.el.remove();stop()};
+  window.addEventListener('popstate',stop); // botón atrás de Android: termina y guarda
+  mr.start(1000);t0=Date.now();keepAwake();
+}
+function keepAwakeOff(){if(ui.view!=='stage'&&!ui.auto&&wake){try{wake.release()}catch(e){}wake=null}}
+async function saveRec(sid,ver,blob,dur){
+  const s=S.songs[sid];if(!s)return;
+  const id='a'+uid()+uid();
+  try{await audPut(id,blob)}catch(e){toast('⚠️ No se pudo guardar la grabación');return}
+  const l=lay(s,ver);
+  l.rec.push({id,name:'Grabación '+(l.rec.length+1),dur:Math.round(dur),at:Date.now(),by:ver==='grp'&&Cloud.user?(Cloud.user.displayName||Cloud.user.email||''):'',type:blob.type,size:blob.size});
+  (S.meta.pend.aud=S.meta.pend.aud||{})[id]=ver==='grp'?'g':'m';
+  saveLay(s,ver);toast('🎤 Grabación guardada');
+  if(ui.view==='reader'&&ui.songId===sid&&!document.querySelector('.ov'))keep(true);
+}
+async function playRec(id){
+  const s=S.songs[ui.songId],ver=ui.ver,r=s&&lay(s,ver).rec.find(x=>x.id===id);if(!r)return;
+  let blob=await audGet(id);
+  if(!blob){
+    if(Cloud.st!=='on'){toast(navigator.onLine?'Entrá a la nube del grupo (Ajustes) para bajar este audio':'Sin señal: este audio todavía no está en este aparato');return}
+    toast('Bajando audio…');
+    try{blob=await Cloud.getAudio(id,ver==='grp'?'g':'m',r.type)}catch(e){toast('No se pudo bajar el audio. '+Cloud.why(e));return}
+    if(!blob){toast('Este audio todavía no terminó de subirse desde el otro celular. Probá en un rato.');return}
+    await audPut(id,blob).catch(()=>{});
+  }
+  const row=document.querySelector('.recs [data-rid="'+id+'"]');if(!row)return;
+  document.querySelectorAll('.recs audio').forEach(a=>{a.pause();URL.revokeObjectURL(a.src);a.remove()});
+  const a=document.createElement('audio');a.controls=true;a.style.flex='1 1 100%';a.src=URL.createObjectURL(blob);row.appendChild(a);a.play().catch(()=>{});
+}
+function forgetRecs(l,scope){const P=S.meta.pend;l.rec.forEach(r=>{audDel(r.id);if(P.aud&&P.aud[r.id])delete P.aud[r.id];else(P.auddel=P.auddel||{})[r.id]=scope})}
 
 /* ---------- auto-scroll ---------- */
 let raf=null,last=0,acc=0,wake=null;
@@ -903,7 +1000,7 @@ async function delSong(id){
   const s=S.songs[id],n=eventsOfSong(id).length;
   if(!await ask('¿Eliminar “'+s.title+'”?'+(n?' También se saca de '+n+' evento(s).':'')))return false;
   events().forEach(e=>{if(e.songs.includes(id)){e.songs=e.songs.filter(i=>i!==id);save(e)}});
-  s.deleted=true;s.text='';s.grp=emptyL();save(s);s.reh=emptyL();saveMine(s);return true;
+  forgetRecs(s.grp,'g');forgetRecs(s.reh,'m');s.deleted=true;s.text='';s.grp=emptyL();save(s);s.reh=emptyL();saveMine(s);return true;
 }
 function openFilter(){
   const g=genresUsed();
@@ -978,6 +1075,14 @@ const A={
   cgrp:t=>{ui.cgrp=t.dataset.v;render()},
   'new-ct':()=>editContact(null),
   'edit-ct':t=>editContact(S.contacts[t.dataset.id]),
+  rec:()=>startRec(),'to-recs':()=>{const r=$('.recs');if(r)window.scrollTo({top:r.getBoundingClientRect().top+window.scrollY-130,behavior:'smooth'})},'rec-play':t=>playRec(t.dataset.id),
+  'rec-name':t=>{const s=S.songs[ui.songId],ver=ui.ver,r=lay(s,ver).rec.find(x=>x.id===t.dataset.id);if(!r)return;
+    const m=modal('<h2>Nombre de la grabación</h2><input type="text" id="rn" maxlength="80" value="'+esc(r.name)+'"><div class="row" style="margin-top:12px"><button style="flex:1" data-close>Cancelar</button><button class="pri" style="flex:1" id="rok">Guardar</button></div>');
+    const i=m.el.querySelector('#rn');i.focus();i.select();m.el.querySelector('[data-close]').onclick=m.close;
+    m.el.querySelector('#rok').onclick=()=>{const v=i.value.trim();if(v&&v!==r.name){r.name=v;saveLay(s,ver)}m.close();keep(true)}},
+  'rec-del':async t=>{const s=S.songs[ui.songId],ver=ui.ver,l=lay(s,ver),r=l.rec.find(x=>x.id===t.dataset.id);if(!r)return;
+    if(!await ask('¿Borrar la grabación “'+r.name+'”?'+(ver==='grp'?' Se borra para todos.':''),'Borrar'))return;
+    forgetRecs({rec:[r]},ver==='grp'?'g':'m');l.rec=l.rec.filter(x=>x!==r);saveLay(s,ver);keep(true)},
   'cl-in':()=>Cloud.signIn(),'cl-out':()=>Cloud.signOut(),'cl-members':()=>openMembers(),
   'cl-retry':()=>{if(Cloud.user)Cloud.onUser(Cloud.user);else{Cloud.auth=null;Cloud.start()}}
 };
