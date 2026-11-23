@@ -1,0 +1,4 @@
+# Respaldo con todas las letras: no se publica (se comparte aparte)
+respaldo-*.json
+albores-respaldo-*.json
+evento-*.json
