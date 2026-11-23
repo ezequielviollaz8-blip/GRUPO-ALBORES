@@ -159,7 +159,7 @@ const ic=(n,cls,fill)=>'<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="
 /* ---------- datos ---------- */
 const LS='letras.v1',LST='letras.stageTheme',LB='letras.lastBackup';
 let S={songs:{},events:{},contacts:{}};
-const ui={view:'home',tab:'home',stack:[],q:'',filter:'all',songId:null,eventId:null,fromEvent:null,ver:'clean',draft:null,tool:'move',color:'#ff5a4e',auto:false,speed:35,st:null,sfs:32,cgrp:'int',cq:'',setEv:null};
+const ui={view:'home',tab:'home',stack:[],q:'',filter:'all',songId:null,eventId:null,fromEvent:null,ctx:null,ver:'clean',draft:null,tool:'move',color:'#ff5a4e',auto:false,speed:35,st:null,sfs:32,cgrp:'int',cq:'',setEv:null};
 try{const f=+localStorage.getItem('letras.sfs');if(f)ui.sfs=f}catch(e){}
 const GENRES=['Chacarera','Zamba','Chamamé','Gato','Carnavalito','Cueca','Vidala','Escondido','Huayno','Malambo','Litoraleña','Rasguido doble','Polca','Bailecito','Takirari','Balada','Cumbia','Popurrí'];
 function guessGenre(t){t=norm(t);
@@ -319,7 +319,7 @@ function openDrawer(){
 
 /* ---------- navegación ---------- */
 const ROOTS=['home','songs','events','setlist','contacts','settings'];
-function snap(){return{view:ui.view,tab:ui.tab,songId:ui.songId,eventId:ui.eventId,fromEvent:ui.fromEvent,ver:ui.ver,st:ui.st,draft:ui.draft,y:window.scrollY}}
+function snap(){return{view:ui.view,tab:ui.tab,songId:ui.songId,eventId:ui.eventId,fromEvent:ui.fromEvent,ctx:ui.ctx,ver:ui.ver,st:ui.st,draft:ui.draft,y:window.scrollY}}
 function enter(view,extra){ui.stack.push(snap());try{history.pushState({d:ui.stack.length},'')}catch(e){}Object.assign(ui,{view},extra||{});ui.tool='move';render()}
 function back(){if(ui.stack.length){try{history.back()}catch(e){doBack()}}else go(ui.tab)}
 function doBack(){
@@ -432,8 +432,7 @@ function textBlock(s,ver){
 function sizeSvgs(root){(root||document).querySelectorAll('.dw').forEach(w=>{const fs=parseFloat(getComputedStyle(w).fontSize)||16;const g=w.querySelector('svg g');if(g)g.setAttribute('transform','scale('+fs+')')})}
 function readerView(){
   const s=S.songs[ui.songId];if(!s)return'';
-  const ev=ui.fromEvent&&S.events[ui.fromEvent];let idx=-1,prev=null,next=null,ids=[];
-  if(ev){ids=evSongs(ev);idx=ids.indexOf(s.id);prev=ids[idx-1];next=ids[idx+1]}
+  const ids=readerIds(),idx=ids.indexOf(s.id),prev=idx>0?ids[idx-1]:null,next=idx>=0?ids[idx+1]:null,ev=ids.length>1;
   const reh=ui.ver==='reh';
   const colors=['#ff5a4e','#4ea3ff','#4fd36b','#ffd23f','#ffffff'];
   const T=(t,i,l)=>'<button data-a="tool" data-v="'+t+'" class="'+(ui.tool===t?'on':'')+'">'+ic(i)+(l?'<span>'+l+'</span>':'')+'</button>';
@@ -445,6 +444,19 @@ function readerView(){
   +'<div id="wrap" class="'+(s.align==='center'?'ac':'')+'" style="font-size:'+(s.fs||24)+'px">'+textBlock(s,ui.ver)+'</div>'
   +(reh?'<div class="notes"><label class="f">Notas del ensayo</label><textarea id="r-notes" placeholder="Ej: entrar después del 2° bombo, bajar un tono…">'+esc(s.reh.notes)+'</textarea><div class="row wrap" style="margin-top:10px"><button style="flex:1" data-a="edit-reh">'+ic('edit')+' Editar letra de ensayo</button><button style="flex:1" data-a="to-clean">'+ic('check')+' Pasar a limpio</button><button style="flex:1" data-a="reset-reh">'+ic('undo')+' Volver a copiar la limpia</button></div></div><div style="height:30vh"></div>':'')
   +(ev?'<div class="foot"><button data-a="goto" data-id="'+(prev||'')+'" '+(prev?'':'disabled')+'>'+ic('back')+' Anterior</button><button class="ghost" style="flex:.5" disabled>'+(idx+1)+' / '+ids.length+'</button><button class="pri" data-a="goto" data-id="'+(next||'')+'" '+(next?'':'disabled')+'>Siguiente '+ic('chev')+'</button></div>':'');
+}
+/* canciones por las que se pasa con un toque: el setlist del evento o la lista desde donde se abrió */
+function readerIds(){
+  const ev=ui.fromEvent&&S.events[ui.fromEvent];
+  if(ev)return evSongs(ev);
+  return (ui.ctx||[]).filter(i=>S.songs[i]&&!S.songs[i].deleted);
+}
+function tapSide(x,w){return x>w*0.68?1:x<w*0.32?-1:0}
+function readerStep(d){
+  const ids=readerIds(),i=ids.indexOf(ui.songId),n=ids[i+d];
+  if(i<0||!n){toast(d>0?'Es la última canción':'Es la primera canción');return}
+  ui.songId=n;ui.tool='move';render();window.scrollTo(0,0);
+  toast((d>0?'→ ':'← ')+S.songs[n].title);
 }
 function eventView(){
   const e=S.events[ui.eventId];if(!e)return'';
@@ -469,9 +481,21 @@ function render(keepAuto){
   document.body.classList.toggle('home',ui.view==='home');
   const V={home:homeView,songs:songsView,events:eventsView,setlist:setlistView,contacts:contactsView,settings:settingsView,edit:editView,reader:readerView,event:eventView,stage:stageView};
   $('#app').innerHTML=(V[ui.view]||homeView)();
-  if(ui.view==='reader'){setupDraw();if(ui.auto)startAuto()}
+  if(ui.view==='reader'){setupDraw();setupTap();if(ui.auto)startAuto()}
   else if(ui.view==='stage')stageAfter();
   if(ui.focus){ui.focus=false;const q=$('#q');if(q)q.focus()}
+}
+
+/* ---------- lector: toque a los costados para pasar de canción ---------- */
+const LH='letras.tapHint';
+function setupTap(){
+  const w=$('#wrap');if(!w)return;
+  w.addEventListener('click',e=>{
+    if(ui.tool!=='move'||readerIds().length<2)return;
+    const d=tapSide(e.clientX,window.innerWidth);if(d)readerStep(d);
+  });
+  let seen=false;try{seen=!!localStorage.getItem(LH)}catch(e){}
+  if(!seen&&readerIds().length>1){try{localStorage.setItem(LH,'1')}catch(e){}toast('Tocá a la derecha para pasar a la siguiente, a la izquierda para volver')}
 }
 
 /* ---------- lector: dibujo (versión de ensayo) ---------- */
@@ -512,7 +536,7 @@ function tick(t){
 
 /* ---------- pantalla completa / escenario ---------- */
 function stageTheme(){try{return localStorage.getItem(LST)||'dark'}catch(e){return'dark'}}
-function stIds(){const ev=ui.fromEvent&&S.events[ui.fromEvent];return ev?evSongs(ev):[ui.songId]}
+function stIds(){const r=readerIds();return r.length&&r.includes(ui.songId)?r:[ui.songId]}
 function stVer(){const ev=ui.fromEvent&&S.events[ui.fromEvent];return ev?(ev.ver==='reh'?'reh':'clean'):ui.ver}
 function menuHtml(){
   const st=ui.st,sc=st.mode==='scroll',dark=stageTheme()==='dark';
@@ -555,10 +579,13 @@ function stageAfter(){
     let tk=0;st.addEventListener('scroll',()=>{if(tk)return;tk=requestAnimationFrame(()=>{tk=0;curStageIdx()})},{passive:true})}
   if(ui.auto&&ui.st.mode==='scroll')startAuto();
   let x0=null,sw=0;
-  st.addEventListener('click',()=>{if(Date.now()-sw<400)return;ui.st.menu=!ui.st.menu;$('#fm').classList.toggle('show',ui.st.menu)});
+  st.addEventListener('click',e=>{if(Date.now()-sw<400)return;
+    const d=ui.st.ids.length>1&&!ui.st.menu?tapSide(e.clientX,window.innerWidth):0;
+    if(d){stStep(d);return}
+    ui.st.menu=!ui.st.menu;$('#fm').classList.toggle('show',ui.st.menu)});
   st.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
   st.addEventListener('touchend',e=>{if(ui.st.mode!=='fit'||x0===null||ui.st.ids.length<2)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>70){sw=Date.now();stStep(dx<0?1:-1)}});
-  if(ui.st.hint){ui.st.hint=false;const h=document.createElement('div');h.className='hint';h.textContent='Tocá la pantalla para ver el menú';document.body.appendChild(h);setTimeout(()=>h.remove(),3500)}
+  if(ui.st.hint){ui.st.hint=false;const h=document.createElement('div');h.className='hint';h.textContent=ui.st.ids.length>1?'Toque a la derecha: siguiente · izquierda: anterior · centro: menú':'Tocá la pantalla para ver el menú';document.body.appendChild(h);setTimeout(()=>h.remove(),3500)}
 }
 function stStep(d){
   const st=ui.st,n=st.idx+d;if(n<0||n>=st.ids.length)return;
@@ -673,7 +700,10 @@ const A={
     save(s);ui.draft=null;toast('Guardada');back();
   },
   'del-song':async()=>{if(await delSong(ui.draft.id)){ui.draft=null;ui.stack=[];try{history.go(-2)}catch(e){}go('songs')}},
-  open:t=>{const ev=t.dataset.ev||null,e=ev&&S.events[ev];enter('reader',{songId:t.dataset.id,fromEvent:ev,ver:e&&e.ver==='reh'?'reh':'clean'})},
+  open:t=>{const ev=t.dataset.ev||null,e=ev&&S.events[ev];
+    const ctx=[];if(!ev)document.querySelectorAll('#app [data-a="open"]').forEach(x=>{if(!x.dataset.ev&&!ctx.includes(x.dataset.id))ctx.push(x.dataset.id)});
+    if(!ev&&ui.view==='home'){const all=songs().sort((a,b)=>(b.fav?1:0)-(a.fav?1:0)||byTitle(a,b)).map(s=>s.id);ctx.length=0;ctx.push(...all)}
+    enter('reader',{songId:t.dataset.id,fromEvent:ev,ctx:ev?null:ctx,ver:e&&e.ver==='reh'?'reh':'clean'})},
   goto:t=>{if(!t.dataset.id)return;ui.songId=t.dataset.id;ui.tool='move';render();window.scrollTo(0,0)},
   ver:t=>{ui.ver=t.dataset.v;ui.tool='move';keep(true)},
   tool:t=>{ui.tool=t.dataset.v;keep(true)},
