@@ -100,6 +100,13 @@ pre.rh{white-space:pre;line-height:1.45}
 .dw{position:relative;display:inline-block;min-width:100%}
 .dw svg.dov{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .dw.drawing svg.dov{pointer-events:auto;touch-action:none}
+.dov .mk{pointer-events:auto;cursor:pointer}
+.dw.drawing .dov .mk{pointer-events:none}
+.player{position:fixed;left:10px;right:10px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:12;background:#16161b;border:1px solid rgba(242,179,61,.5);border-radius:16px;padding:8px 10px;box-shadow:0 8px 24px rgba(0,0,0,.6);display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:700px;margin:0 auto}
+.player b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.player audio{flex:1 1 100%;height:40px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 100%}
+.tags button{min-height:34px;padding:4px 10px;font-size:13px;font-weight:700;letter-spacing:.03em}
 .tools{position:sticky;top:65px;z-index:4;background:rgba(5,5,7,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:8px 10px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
 .tools button{min-height:40px;padding:6px 10px}
 .cdot{width:28px;height:28px;border-radius:50%;border:3px solid transparent;padding:0;min-height:0}
@@ -163,7 +170,7 @@ const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(
 const byTitle=(a,b)=>a.title.localeCompare(b.title,'es',{sensitivity:'base'});
 
 /* ---------- íconos ---------- */
-const P={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',music:'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',cal:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4',list:'M5 3h14v18H5zM9 8l1.5 1.5L13 7M9 14l1.5 1.5L13 13M15 8h2M15 14h2',users:'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6',gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-5-5',filter:'M3 4h18l-7 8v7l-4 2v-9z',star:'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z',more:'M12 5h.01M12 12h.01M12 19h.01',plus:'M12 5v14M5 12h14',pin:'M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2',calplus:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4M12 13v6M9 16h6',bell:'M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0',menu:'M4 6h16M4 12h16M4 18h16',back:'M15 18l-6-6 6-6',chev:'M9 18l6-6-6-6',share:'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',wa:'M3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 8 19.3zM9 8.5c0 3.5 3 6.5 6.5 6.5l1.2-1.5-2-1-1 .8a5 5 0 0 1-2.5-2.5l.8-1-1-2z',phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z',edit:'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',trash:'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6',hl:'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4',eraser:'M7 21h13M5.5 17.5l-2-2a2 2 0 0 1 0-2.8L13 3.2a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L10 20H7zM9 9l6 6',undo:'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11',play:'M7 4l13 8-13 8z',pause:'M7 4h3v16H7zM14 4h3v16h-3z',full:'M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3',hand:'M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15',copy:'M9 9h11v11H9zM5 15H4V4h11v1',dl:'M12 3v12M7 10l5 5 5-5M5 21h14',up:'M18 15l-6-6-6 6',down:'M6 9l6 6 6-6',x:'M18 6L6 18M6 6l12 12',check:'M20 6L9 17l-5-5',note:'M4 4h16v11l-5 5H4zM15 20v-5h5',alignL:'M3 6h18M3 12h11M3 18h15',alignC:'M3 6h18M6.5 12h11M4.5 18h15',dup:'M8 8h12v12H8zM4 16V4h12',combo:'M3 4h5v16H3zM10 4h4v16h-4zM16 4h5v16h-5z',mic:'M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3'};
+const P={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',music:'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',cal:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4',list:'M5 3h14v18H5zM9 8l1.5 1.5L13 7M9 14l1.5 1.5L13 13M15 8h2M15 14h2',users:'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6',gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-5-5',filter:'M3 4h18l-7 8v7l-4 2v-9z',star:'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z',more:'M12 5h.01M12 12h.01M12 19h.01',plus:'M12 5v14M5 12h14',pin:'M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2',calplus:'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4M12 13v6M9 16h6',bell:'M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0',menu:'M4 6h16M4 12h16M4 18h16',back:'M15 18l-6-6 6-6',chev:'M9 18l6-6-6-6',share:'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',wa:'M3.5 20.5l1.4-4.3A8.5 8.5 0 1 1 8 19.3zM9 8.5c0 3.5 3 6.5 6.5 6.5l1.2-1.5-2-1-1 .8a5 5 0 0 1-2.5-2.5l.8-1-1-2z',phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z',edit:'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',trash:'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6',hl:'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4',eraser:'M7 21h13M5.5 17.5l-2-2a2 2 0 0 1 0-2.8L13 3.2a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L10 20H7zM9 9l6 6',undo:'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11',play:'M7 4l13 8-13 8z',pause:'M7 4h3v16H7zM14 4h3v16h-3z',full:'M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3',hand:'M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15',copy:'M9 9h11v11H9zM5 15H4V4h11v1',dl:'M12 3v12M7 10l5 5 5-5M5 21h14',up:'M18 15l-6-6-6 6',down:'M6 9l6 6 6-6',x:'M18 6L6 18M6 6l12 12',check:'M20 6L9 17l-5-5',note:'M4 4h16v11l-5 5H4zM15 20v-5h5',alignL:'M3 6h18M3 12h11M3 18h15',alignC:'M3 6h18M6.5 12h11M4.5 18h15',dup:'M8 8h12v12H8zM4 16V4h12',combo:'M3 4h5v16H3zM10 4h4v16h-4zM16 4h5v16h-5z',box:'M4 6h16v12H4z',sep:'M3 12h18M8 6h8M8 18h8',tag:'M3 12V3h9l9 9-9 9zM7.5 7.5h.01',mic:'M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3'};
 const ic=(n,cls,fill)=>'<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="'+(fill?'currentColor':'none')+'" stroke="currentColor" stroke-width="'+(n==='more'?3:2)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P[n]+'"/></svg>';
 
 /* ---------- datos ---------- */
@@ -171,6 +178,7 @@ const LS='letras.v1',LST='letras.stageTheme',LB='letras.lastBackup';
 let S={songs:{},events:{},contacts:{}};
 const ui={view:'home',tab:'home',stack:[],q:'',filter:'all',songId:null,eventId:null,fromEvent:null,ctx:null,ver:'clean',draft:null,tool:'move',color:'#ff5a4e',auto:false,speed:35,st:null,sfs:32,cgrp:'int',cq:'',setEv:null};
 try{const f=+localStorage.getItem('letras.sfs');if(f)ui.sfs=f}catch(e){}
+ui.tag='ESTRIBILLO';try{const t=localStorage.getItem('letras.tag');if(t)ui.tag=t}catch(e){}
 const GENRES=['Chacarera','Zamba','Chamamé','Gato','Carnavalito','Cueca','Vidala','Escondido','Huayno','Malambo','Litoraleña','Rasguido doble','Polca','Bailecito','Takirari','Balada','Cumbia','Popurrí'];
 function guessGenre(t){t=norm(t);
   const R=[[/chacarera|chacrera/,'Chacarera'],[/zamba|samba/,'Zamba'],[/chamam/,'Chamamé'],[/\bgato\b/,'Gato'],[/carnavalito|taquirar|takirari/,'Carnavalito'],[/cueca/,'Cueca'],[/vidala/,'Vidala'],[/escondido/,'Escondido'],[/huayno/,'Huayno'],[/malambo/,'Malambo'],[/litoral/,'Litoraleña'],[/polca/,'Polca'],[/bailecito/,'Bailecito']];
@@ -694,7 +702,22 @@ function editView(){
   +'</div><div class="foot"><button data-a="back">Cancelar</button><button class="pri" data-a="save-song">Guardar</button></div>';
 }
 /* dibujos: puntos en "em" del texto, así acompañan al tamaño de letra */
-function svgPaths(draw){return (draw||[]).map(t=>'<path d="'+pathD(t.p)+'" stroke="'+esc(t.c)+'" stroke-width="'+t.w+'" stroke-opacity="'+t.a+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/>').join('')}
+const TAGS=['ESTRIBILLO','INTRO','PUENTE','SOLO','FINAL','CORTE','x2','SE REPITE'];
+const tagW=t=>+(String(t).length*0.5+0.7).toFixed(2);
+function svgPaths(draw){return (draw||[]).map(t=>{
+  const p=t.p||[];
+  if(t.k==='rect'){const x=Math.min(p[0],p[2]),y=Math.min(p[1],p[3]);return '<rect x="'+x+'" y="'+y+'" width="'+Math.abs(p[2]-p[0])+'" height="'+Math.abs(p[3]-p[1])+'" rx="0.3" fill="none" stroke="'+esc(t.c)+'" stroke-width="0.1"/>'}
+  if(t.k==='line')return '<path d="M'+p[0]+' '+p[1]+'H'+p[2]+'" stroke="'+esc(t.c)+'" stroke-width="0.1" stroke-dasharray="0.5 0.3" stroke-linecap="round"/>';
+  if(t.k==='tag'){const w=tagW(t.t);return '<g><rect x="'+p[0]+'" y="'+(p[1]-0.55)+'" width="'+w+'" height="1.1" rx="0.3" fill="'+esc(t.c)+'"/><text x="'+(p[0]+w/2)+'" y="'+(p[1]+0.25)+'" text-anchor="middle" font-size="0.7" font-weight="700" fill="#111" textLength="'+(w-0.6)+'" lengthAdjust="spacingAndGlyphs" font-family="system-ui,sans-serif">'+esc(t.t)+'</text></g>'}
+  if(t.k==='mic')return '<g class="mk" data-a="mk-play" data-id="'+esc(t.rec)+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="0.65" fill="#ff3b30"/><g transform="translate('+(p[0]-0.42)+' '+(p[1]-0.42)+') scale(0.035)" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="'+P.mic+'"/></g></g>';
+  return '<path d="'+pathD(p)+'" stroke="'+esc(t.c)+'" stroke-width="'+t.w+'" stroke-opacity="'+t.a+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'}).join('')}
+/* ¿el punto p toca esta marca? (para la goma) */
+function hitMark(t,p){const q=t.p||[],near=(x,y,r)=>Math.hypot(x-p[0],y-p[1])<r;
+  if(t.k==='rect'){const x1=Math.min(q[0],q[2]),x2=Math.max(q[0],q[2]),y1=Math.min(q[1],q[3]),y2=Math.max(q[1],q[3]),inX=p[0]>x1-.4&&p[0]<x2+.4,inY=p[1]>y1-.4&&p[1]<y2+.4;return inX&&inY&&(Math.abs(p[0]-x1)<.45||Math.abs(p[0]-x2)<.45||Math.abs(p[1]-y1)<.45||Math.abs(p[1]-y2)<.45)}
+  if(t.k==='line')return p[0]>q[0]-.3&&p[0]<q[2]+.3&&Math.abs(p[1]-q[1])<.45;
+  if(t.k==='tag')return p[0]>q[0]-.2&&p[0]<q[0]+tagW(t.t)+.2&&Math.abs(p[1]-q[1])<.75;
+  if(t.k==='mic')return near(q[0],q[1],.8);
+  for(let i=0;i<q.length;i+=2)if(near(q[i],q[i+1],.5))return true;return false}
 function pathD(p){if(p.length<2)return'';let d='M'+p[0]+' '+p[1];if(p.length===2)d+='l0.001 0';for(let i=2;i<p.length;i+=2)d+='L'+p[i]+' '+p[i+1];return d}
 /* versiones: 'clean' limpia · 'mine' mi ensayo · 'grp' ensayo del grupo ·
    'reh' (eventos y escenario) = mi ensayo, o el del grupo si no tengo uno */
@@ -722,7 +745,9 @@ function readerView(){
   const T=(t,i,l)=>'<button data-a="tool" data-v="'+t+'" class="'+(ui.tool===t?'on':'')+'">'+ic(i)+(l?'<span>'+l+'</span>':'')+'</button>';
   return '<div class="top"><button class="ghost sq" data-a="back" aria-label="Volver">'+ic('back')+'</button><h1>'+esc(s.title)+'</h1><button class="ghost sq star '+(s.fav?'fav':'')+'" data-a="fav" data-id="'+s.id+'">'+ic('star','',s.fav)+'</button><button class="sq" data-a="edit-song" aria-label="Editar">'+ic('edit')+'</button></div>'
   +'<div class="tools"><div class="seg" style="flex:1 1 100%"><button data-a="ver" data-v="clean" class="'+(!reh?'on':'')+'">Limpia</button><button data-a="ver" data-v="grp" class="'+(grp?'on':'')+'">Grupo'+(hasL(s.grp)?' ✏️':'')+'</button><button data-a="ver" data-v="mine" class="'+(ui.ver==='mine'?'on':'')+'">Mía'+(hasL(s.reh)?' ✏️':'')+'</button></div>'
-  +(reh?T('move','hand','Leer')+T('pen','edit')+T('hl','hl')+T('erase','eraser')+(ui.tool==='pen'||ui.tool==='hl'?colors.map(c=>'<button class="cdot '+(ui.color===c?'on':'')+'" style="background:'+c+'" data-a="color" data-v="'+c+'" aria-label="Color"></button>').join(''):'')+'<button data-a="undo" aria-label="Deshacer">'+ic('undo')+'</button><button data-a="clear" aria-label="Borrar dibujos">'+ic('trash')+'</button><button data-a="rec" aria-label="Grabar audio" title="Grabar audio">'+ic('mic')+'</button>'+(L.rec.length?'<button data-a="to-recs" title="Ver grabaciones">🎧 '+L.rec.length+'</button>':''):'')
+  +(reh?T('move','hand','Leer')+T('pen','edit')+T('hl','hl')+T('rect','box')+T('line','sep')+T('tag','tag')+T('erase','eraser')
+  +(ui.tool==='tag'?'<div class="tags">'+TAGS.concat(TAGS.includes(ui.tag)?[]:[ui.tag]).map(x=>'<button data-a="tagset" data-v="'+esc(x)+'" class="'+(ui.tag===x?'on':'')+'">'+esc(x)+'</button>').join('')+'<button data-a="tagnew">✏️ Otra</button></div>':'')
+  +(['pen','hl','rect','line','tag'].includes(ui.tool)?colors.map(c=>'<button class="cdot '+(ui.color===c?'on':'')+'" style="background:'+c+'" data-a="color" data-v="'+c+'" aria-label="Color"></button>').join(''):'')+'<button data-a="undo" aria-label="Deshacer">'+ic('undo')+'</button><button data-a="clear" aria-label="Borrar dibujos">'+ic('trash')+'</button><button data-a="rec-at" class="'+(ui.tool==='mic'?'on':'')+'" aria-label="Grabar audio en un lugar de la letra" title="Grabar audio en un lugar de la letra">'+ic('mic')+'</button>'+(L.rec.length?'<button data-a="to-recs" title="Ver grabaciones">🎧 '+L.rec.length+'</button>':''):'')
   +'<button data-a="align" aria-label="Alineación" title="Centrar / alinear a la izquierda">'+ic(s.align==='center'?'alignC':'alignL')+'</button>'
   +'<button data-a="stage">'+ic('full')+'</button><button data-a="fs" data-v="-2">A−</button><button data-a="fs" data-v="2">A+</button><button data-a="auto" class="'+(ui.auto?'on':'')+'">'+ic(ui.auto?'pause':'play')+'</button>'+(ui.auto?'<button data-a="spd" data-v="-10">🐢</button><button data-a="spd" data-v="10">🐇</button>':'')+'</div>'
   +'<div id="wrap" class="'+(s.align==='center'?'ac':'')+'" style="font-size:'+(s.fs||(s.combo?40:24))+'px">'+textBlock(s,ui.ver)+'</div>'
@@ -776,7 +801,7 @@ function setupTap(){
   const w=$('#wrap');if(!w)return;
   pinch(w,()=>parseFloat(w.style.fontSize)||24,f=>{w.style.fontSize=f+'px';sizeSvgs(w)},f=>{const s=S.songs[ui.songId];s.fs=Math.round(f);saveMine(s)});
   w.addEventListener('click',e=>{
-    if(Date.now()-lastPinch<500)return;
+    if(Date.now()-lastPinch<500||e.target.closest('.mk'))return;
     if(ui.tool!=='move'||readerIds().length<2)return;
     const d=tapSide(e.clientX,window.innerWidth);if(d)readerStep(d);
   });
@@ -795,15 +820,35 @@ function setupDraw(){
 function emPt(e){const w=$('#wrap .dw'),b=w.getBoundingClientRect(),fs=parseFloat(getComputedStyle(w).fontSize);return[+((e.clientX-b.left)/fs).toFixed(3),+((e.clientY-b.top)/fs).toFixed(3)]}
 function pd(e){
   if(ui.tool==='move')return;e.preventDefault();try{e.target.setPointerCapture(e.pointerId)}catch(x){}
-  const p=emPt(e);if(ui.tool==='erase'){cur={erase:true};erase(p);return}
+  const p=emPt(e),s=S.songs[ui.songId],l=lay(s,ui.ver);
+  if(ui.tool==='erase'){cur={erase:true,mics:[]};erase(p);return}
+  const add=t=>{l.draw.push(t);saveLay(s,ui.ver);$('#wrap .dw svg g').innerHTML=svgPaths(l.draw)};
+  if(ui.tool==='line'){const w=$('#wrap .dw'),fs=parseFloat(getComputedStyle(w).fontSize);add({k:'line',c:ui.color,p:[0,p[1],+(w.scrollWidth/fs).toFixed(2),p[1]]});return}
+  if(ui.tool==='tag'){add({k:'tag',c:ui.color,t:ui.tag,p});return}
+  if(ui.tool==='mic'){ui.tool='move';
+    if(ui.place){const id=ui.place;ui.place=null;l.draw=l.draw.filter(t=>!(t.k==='mic'&&t.rec===id));add({k:'mic',rec:id,p});keep(true);toast('🎤 Marca puesta');return}
+    keep(true);startRec(p);return}
+  if(ui.tool==='rect'){cur={k:'rect',c:ui.color,p:[p[0],p[1],p[0],p[1]]};const g=$('#wrap .dw svg g');g.insertAdjacentHTML('beforeend',svgPaths([cur]));curEl=g.lastElementChild;return}
   cur={c:ui.color,w:ui.tool==='hl'?0.9:0.1,a:ui.tool==='hl'?0.35:1,p:p.slice()};
   const g=$('#wrap .dw svg g');g.insertAdjacentHTML('beforeend',svgPaths([cur]));curEl=g.lastElementChild;
 }
-function pm(e){if(!cur)return;e.preventDefault();const p=emPt(e);if(cur.erase){erase(p);return}cur.p.push(p[0],p[1]);curEl.setAttribute('d',pathD(cur.p))}
-function pu(){if(!cur)return;const s=S.songs[ui.songId];if(!cur.erase){lay(s,ui.ver).draw.push(cur);saveLay(s,ui.ver)}cur=null;curEl=null}
+function pm(e){if(!cur)return;e.preventDefault();const p=emPt(e);if(cur.erase){erase(p);return}
+  if(cur.k==='rect'){cur.p[2]=p[0];cur.p[3]=p[1];const n=curEl;n.outerHTML=svgPaths([cur]);curEl=$('#wrap .dw svg g').lastElementChild;return}
+  cur.p.push(p[0],p[1]);curEl.setAttribute('d',pathD(cur.p))}
+function pu(){if(!cur)return;const s=S.songs[ui.songId],c=cur;cur=null;curEl=null;
+  if(c.erase){if(c.mics.length)askDelMics(s,ui.ver,c.mics);return}
+  if(c.k==='rect'&&(Math.abs(c.p[2]-c.p[0])<.4||Math.abs(c.p[3]-c.p[1])<.4)){$('#wrap .dw svg g').innerHTML=svgPaths(lay(s,ui.ver).draw);return}
+  if(c.k==='rect')c.p=c.p.map(v=>+v.toFixed(3));
+  lay(s,ui.ver).draw.push(c);saveLay(s,ui.ver)}
+async function askDelMics(s,ver,ids){const l=lay(s,ver);
+  for(const id of [...new Set(ids)]){const r=l.rec.find(x=>x.id===id);
+    if(!r){l.draw=l.draw.filter(t=>!(t.k==='mic'&&t.rec===id));saveLay(s,ver);continue}
+    if(await ask('¿Borrar la grabación “'+r.name+'”? Se borran la marca y el audio'+(ver==='grp'?', para todos':'')+'.','Borrar'))delRec(s,ver,r)}
+  keep(true)}
+function delRec(s,ver,r){const l=lay(s,ver);forgetRecs({rec:[r]},ver==='grp'?'g':'m');l.rec=l.rec.filter(x=>x!==r);l.draw=l.draw.filter(t=>!(t.k==='mic'&&t.rec===r.id));saveLay(s,ver);closePlayer()}
 function erase(p){
   const s=S.songs[ui.songId],l=lay(s,ui.ver);let ch=false;
-  l.draw=l.draw.filter(t=>{for(let i=0;i<t.p.length;i+=2){if(Math.hypot(t.p[i]-p[0],t.p[i+1]-p[1])<0.5){ch=true;return false}}return true});
+  l.draw=l.draw.filter(t=>{if(!hitMark(t,p))return true;if(t.k==='mic'){if(cur&&!cur.mics.includes(t.rec))cur.mics.push(t.rec);return true}ch=true;return false});
   if(ch){saveLay(s,ui.ver);$('#wrap .dw svg g').innerHTML=svgPaths(l.draw)}
 }
 window.addEventListener('resize',()=>{if(ui.view==='reader')sizeSvgs();if(ui.view==='stage'&&ui.st&&ui.st.mode==='fit')setTimeout(doFit,200)});
@@ -816,11 +861,11 @@ function fmtDur(s){s=Math.round(s||0);return Math.floor(s/60)+':'+String(s%60).p
 function recList(s,ver){
   const l=lay(s,ver),grp=ver==='grp';
   return '<div class="recs"><label class="f">🎤 Grabaciones</label>'
-   +(l.rec.length?l.rec.map(r=>'<div class="item" style="flex-wrap:wrap" data-rid="'+esc(r.id)+'"><button class="sq" data-a="rec-play" data-id="'+esc(r.id)+'" aria-label="Escuchar">'+ic('play')+'</button><div class="t" data-a="rec-name" data-id="'+esc(r.id)+'"><b>'+esc(r.name)+'</b><small>'+fmtDur(r.dur)+' · '+esc(new Date(r.at).toLocaleDateString('es-AR',{day:'numeric',month:'short'}))+(grp&&r.by?' · '+esc(r.by):'')+' · tocá para cambiar el nombre</small></div><button class="ghost sq danger" data-a="rec-del" data-id="'+esc(r.id)+'" aria-label="Borrar grabación">'+ic('trash')+'</button></div>').join('')
+   +(l.rec.length?l.rec.map(r=>'<div class="item" style="flex-wrap:wrap" data-rid="'+esc(r.id)+'"><button class="sq" data-a="rec-play" data-id="'+esc(r.id)+'" aria-label="Escuchar">'+ic('play')+'</button><div class="t" data-a="rec-name" data-id="'+esc(r.id)+'"><b>'+esc(r.name)+'</b><small>'+fmtDur(r.dur)+' · '+esc(new Date(r.at).toLocaleDateString('es-AR',{day:'numeric',month:'short'}))+(grp&&r.by?' · '+esc(r.by):'')+' · tocá para cambiar el nombre</small></div>'+(l.draw.some(t=>t.k==='mic'&&t.rec===r.id)?'':'<button class="ghost sq" data-a="rec-place" data-id="'+esc(r.id)+'" aria-label="Marcar en la letra" title="Marcar en la letra">📍</button>')+'<button class="ghost sq danger" data-a="rec-del" data-id="'+esc(r.id)+'" aria-label="Borrar grabación">'+ic('trash')+'</button></div>').join('')
      :'<p class="mu" style="margin:4px 0">Todavía no hay grabaciones'+(grp?' del grupo':' tuyas')+' en esta canción.</p>')
    +'<p><button style="width:100%" data-a="rec">'+ic('mic')+' Grabar '+(grp?'para el grupo':'para mí')+'</button></p></div>';
 }
-async function startRec(){
+async function startRec(at){
   const s=S.songs[ui.songId],ver=ui.ver;if(!s||ver==='clean')return;
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Este aparato no permite grabar desde la app');return}
   let stream;
@@ -835,7 +880,7 @@ async function startRec(){
   mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
   mr.onstop=async()=>{if(cancel){toast('Grabación descartada');return}
     const dur=(Date.now()-t0)/1000;if(dur<1||!chunks.length){toast('La grabación quedó vacía');return}
-    await saveRec(s.id,ver,new Blob(chunks,{type:mr.mimeType||mt||'audio/webm'}),dur)};
+    await saveRec(s.id,ver,new Blob(chunks,{type:mr.mimeType||mt||'audio/webm'}),dur,at)};
   tm=setInterval(()=>{const d=(Date.now()-t0)/1000,el=m.el.querySelector('#rt');if(el)el.textContent=fmtDur(d);if(d>=REC_MAX){m.el.remove();stop();toast('Se llegó a los 5 minutos: grabación guardada')}},250);
   m.el.querySelector('#rc').onclick=()=>m.close();
   m.el.querySelector('#rs').onclick=()=>{m.el.remove();stop()};
@@ -843,18 +888,23 @@ async function startRec(){
   mr.start(1000);t0=Date.now();keepAwake();
 }
 function keepAwakeOff(){if(ui.view!=='stage'&&!ui.auto&&wake){try{wake.release()}catch(e){}wake=null}}
-async function saveRec(sid,ver,blob,dur){
+async function saveRec(sid,ver,blob,dur,at){
   const s=S.songs[sid];if(!s)return;
   const id='a'+uid()+uid();
   try{await audPut(id,blob)}catch(e){toast('⚠️ No se pudo guardar la grabación');return}
   const l=lay(s,ver);
   l.rec.push({id,name:'Grabación '+(l.rec.length+1),dur:Math.round(dur),at:Date.now(),by:ver==='grp'&&Cloud.user?(Cloud.user.displayName||Cloud.user.email||''):'',type:blob.type,size:blob.size});
+  if(at)l.draw.push({k:'mic',rec:id,p:at});
   (S.meta.pend.aud=S.meta.pend.aud||{})[id]=ver==='grp'?'g':'m';
   saveLay(s,ver);toast('🎤 Grabación guardada');
   if(ui.view==='reader'&&ui.songId===sid&&!document.querySelector('.ov'))keep(true);
 }
+function findRec(id){const pref=[S.songs[ui.songId]].concat(ui.st?ui.st.ids.map(i=>S.songs[i]):[]).filter(Boolean).concat(songs());
+  for(const s of pref)for(const v of ['grp','mine']){const r=lay(s,v).rec.find(x=>x.id===id);if(r)return{s,v,r}}return null}
+function closePlayer(){const p=$('#player');if(p){const a=p.querySelector('audio');if(a){a.pause();URL.revokeObjectURL(a.src)}p.remove()}}
 async function playRec(id){
-  const s=S.songs[ui.songId],ver=ui.ver,r=s&&lay(s,ver).rec.find(x=>x.id===id);if(!r)return;
+  const f=findRec(id);if(!f){toast('Esa grabación ya no está');return}
+  const {s,v:ver,r}=f;
   let blob=await audGet(id);
   if(!blob){
     if(Cloud.st!=='on'){toast(navigator.onLine?'Entrá a la nube del grupo (Ajustes) para bajar este audio':'Sin señal: este audio todavía no está en este aparato');return}
@@ -863,9 +913,11 @@ async function playRec(id){
     if(!blob){toast('Este audio todavía no terminó de subirse desde el otro celular. Probá en un rato.');return}
     await audPut(id,blob).catch(()=>{});
   }
-  const row=document.querySelector('.recs [data-rid="'+id+'"]');if(!row)return;
-  document.querySelectorAll('.recs audio').forEach(a=>{a.pause();URL.revokeObjectURL(a.src);a.remove()});
-  const a=document.createElement('audio');a.controls=true;a.style.flex='1 1 100%';a.src=URL.createObjectURL(blob);row.appendChild(a);a.play().catch(()=>{});
+  closePlayer();
+  const d=document.createElement('div');d.id='player';d.className='player';
+  d.innerHTML='<span>🎤</span><b>'+esc(r.name)+'</b><span class="mu" style="font-size:13px">'+(ver==='grp'?'Grupo':'Mía')+'</span><button class="ghost sq" aria-label="Cerrar">'+ic('x')+'</button>';
+  d.querySelector('button').onclick=closePlayer;
+  const a=document.createElement('audio');a.controls=true;a.src=URL.createObjectURL(blob);d.appendChild(a);document.body.appendChild(d);a.play().catch(()=>{});
 }
 function forgetRecs(l,scope){const P=S.meta.pend;l.rec.forEach(r=>{audDel(r.id);if(P.aud&&P.aud[r.id])delete P.aud[r.id];else(P.auddel=P.auddel||{})[r.id]=scope})}
 
@@ -933,7 +985,7 @@ function stageAfter(){
   if(ui.auto&&ui.st.mode==='scroll')startAuto();
   let x0=null,sw=0;
   pinch(st,()=>ui.st.mode==='fit'?parseFloat($('#fb').style.fontSize)||32:ui.sfs,f=>stageFsLive(f),f=>{stageFsLive(f);if(ui.st.mode==='fit')ui.st.fs=Math.round(f);else{ui.sfs=Math.round(f);try{localStorage.setItem('letras.sfs',ui.sfs)}catch(e){}}refreshMenu()});
-  st.addEventListener('click',e=>{if(Date.now()-sw<400||Date.now()-lastPinch<500)return;
+  st.addEventListener('click',e=>{if(Date.now()-sw<400||Date.now()-lastPinch<500||e.target.closest('.mk'))return;
     const d=ui.st.ids.length>1&&!ui.st.menu?tapSide(e.clientX,window.innerWidth):0;
     if(d){stStep(d);return}
     ui.st.menu=!ui.st.menu;$('#fm').classList.toggle('show',ui.st.menu)});
@@ -1088,7 +1140,7 @@ const A={
     enter('reader',{songId:t.dataset.id,fromEvent:ev,ctx:ev?null:ctx,ver:e&&e.ver==='reh'?resolveVer(S.songs[t.dataset.id],'reh'):'clean'})},
   goto:t=>{if(!t.dataset.id)return;ui.songId=t.dataset.id;ui.tool='move';render();window.scrollTo(0,0)},
   ver:t=>{ui.ver=t.dataset.v;ui.tool='move';keep(true)},
-  tool:t=>{ui.tool=t.dataset.v;keep(true)},
+  tool:t=>{ui.tool=t.dataset.v;ui.place=null;keep(true)},
   color:t=>{ui.color=t.dataset.v;keep(true)},
   undo:()=>{const s=S.songs[ui.songId],l=lay(s,ui.ver);if(l.draw.length){l.draw.pop();saveLay(s,ui.ver);$('#wrap .dw svg g').innerHTML=svgPaths(l.draw)}},
   clear:async()=>{const s=S.songs[ui.songId],l=lay(s,ui.ver);if(!l.draw.length)return;if(await ask(ui.ver==='grp'?'¿Borrar todos los dibujos del ensayo del grupo? Se borran para todos.':'¿Borrar todos tus dibujos de ensayo?','Borrar')){l.draw=[];saveLay(s,ui.ver);keep(true)}},
@@ -1134,7 +1186,14 @@ const A={
     m.el.querySelector('#rok').onclick=()=>{const v=i.value.trim();if(v&&v!==r.name){r.name=v;saveLay(s,ver)}m.close();keep(true)}},
   'rec-del':async t=>{const s=S.songs[ui.songId],ver=ui.ver,l=lay(s,ver),r=l.rec.find(x=>x.id===t.dataset.id);if(!r)return;
     if(!await ask('¿Borrar la grabación “'+r.name+'”?'+(ver==='grp'?' Se borra para todos.':''),'Borrar'))return;
-    forgetRecs({rec:[r]},ver==='grp'?'g':'m');l.rec=l.rec.filter(x=>x!==r);saveLay(s,ver);keep(true)},
+    delRec(s,ver,r);keep(true)},
+  'rec-at':()=>{if(ui.tool==='mic'){ui.tool='move';ui.place=null;keep(true);return}ui.tool='mic';ui.place=null;keep(true);window.scrollTo({top:0,behavior:'smooth'});toast('Tocá en la letra dónde va el audio')},
+  'rec-place':t=>{ui.tool='mic';ui.place=t.dataset.id;keep(true);window.scrollTo({top:0,behavior:'smooth'});toast('Tocá en la letra dónde va la marca 🎤')},
+  'mk-play':t=>playRec(t.dataset.id),
+  tagset:t=>{ui.tag=t.dataset.v;keep(true)},
+  tagnew:()=>{const m=modal('<h2>Pegatina nueva</h2><input type="text" id="tg" maxlength="24" placeholder="Ej: ENTRA EL BOMBO"><div class="row" style="margin-top:12px"><button style="flex:1" data-close>Cancelar</button><button class="pri" style="flex:1" id="tok">Usar</button></div>');
+    const i=m.el.querySelector('#tg');i.focus();m.el.querySelector('[data-close]').onclick=m.close;
+    m.el.querySelector('#tok').onclick=()=>{const v=i.value.trim().toUpperCase();if(v){ui.tag=v;try{localStorage.setItem('letras.tag',v)}catch(e){}}m.close();keep(true)}},
   'cl-in':()=>Cloud.signIn(),'cl-out':()=>Cloud.signOut(),'cl-members':()=>openMembers(),
   'cl-retry':()=>{if(Cloud.user)Cloud.onUser(Cloud.user);else{Cloud.auth=null;Cloud.start()}}
 };
